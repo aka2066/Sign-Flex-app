@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="debugButton" type="id" />
+    <item name="debugContainer" type="id" />
+    <item name="debugStatusText" type="id" />
+</resources>

@@ -1,0 +1,2 @@
+ninja: Entering directory `C:\SignFlex_CV\examples\ASL_Recognition\OpenCV\.cxx\Debug\3o3x6f2q\arm64-v8a'
+ninja: no work to do.

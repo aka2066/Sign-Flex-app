@@ -1,0 +1,49 @@
+<resources>
+    <string name="app_name">SIGN_FLEX</string>
+    
+    <!-- Bluetooth connection strings -->
+    <string name="scan_for_glove">SCAN FOR GLOVE</string>
+    <string name="stop_scan">STOP SCAN</string>
+    <string name="disconnect">DISCONNECT</string>
+    <string name="scanning_for_devices">Scanning for devices…</string>
+    <string name="scan_complete">Scan complete</string>
+    <string name="scan_failed">Scan failed: Error %1$d</string>
+    <string name="connected_to">Connected to: %1$s</string>
+    <string name="connecting_to">Connecting to %1$s</string>
+    <string name="disconnected">Disconnected</string>
+    <string name="failed_to_discover_services">Failed to discover services</string>
+    <string name="esp32_service_not_found">ESP32 service not found</string>
+    <string name="service_discovery_failed">Service discovery failed</string>
+    
+    <!-- Battery status strings -->
+    <string name="battery_status">Battery: %1$d%% (%2$.1fV)</string>
+    <string name="battery_not_available">Battery: N/A</string>
+    
+    <!-- Permission messages -->
+    <string name="bluetooth_permissions_required">Bluetooth permissions are required for this app to function properly</string>
+    <string name="please_enable_bluetooth">Please enable Bluetooth</string>
+    <string name="bluetooth_le_scanner_not_available">Bluetooth LE Scanner not available</string>
+    
+    <!-- Gesture recognition -->
+    <string name="sign_result">Sign: %1$s</string>
+    
+    <!-- Calibration -->
+    <string name="flex_sensors_calibrated">Flex sensors calibrated</string>
+    
+    <!-- Demo mode -->
+    <string name="demo_mode_active">Demo Mode Active</string>
+    
+    <!-- ASL Recognition Activity -->
+    <string name="asl_recognition_title">ASL Recognition</string>
+    <string name="error_main_activity">Error: Main activity not available</string>
+    <string name="status_connected">Connected</string>
+    <string name="status_disconnected">Disconnected</string>
+    <string name="battery_level_format">Battery: %1$d%%</string>
+    <string name="battery_na">Battery: N/A</string>
+    <string name="calibrating_sensors">Calibrating sensors…</string>
+    <string name="sensors_calibrated_demo">Sensors calibrated (Demo)</string>
+    <string name="sensors_calibrated">Sensors calibrated</string>
+    <string name="sign_unknown">Unknown</string>
+    <string name="confidence_format">Confidence: %1$s</string>
+    <string name="history_entry_format">%1$s (%2$s)</string>
+</resources>

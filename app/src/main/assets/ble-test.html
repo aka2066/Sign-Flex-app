@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESP32 BLE Tester</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        .ble-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .status {
+            font-size: 16px;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #f0f0f0;
+            text-align: center;
+            font-weight: bold;
+        }
+        .status.disconnected {
+            background-color: #ffcccc;
+            color: #cc0000;
+        }
+        .status.connected {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status.scanning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .btn {
+            padding: 12px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+        .btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .data-section {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        .data-section h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            font-size: 18px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .data-row:last-child {
+            border-bottom: none;
+        }
+        .data-label {
+            font-weight: bold;
+        }
+        .data-value {
+            font-family: monospace;
+            background-color: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        .log-section {
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f5f5f5;
+            padding: 10px;
+        }
+        .log-entry {
+            font-family: monospace;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        .log-entry.info {
+            color: #0066cc;
+        }
+        .log-entry.error {
+            color: #cc0000;
+        }
+        .log-entry.success {
+            color: #008800;
+        }
+        .hidden {
+            display: none;
+        }
+        .compatibility-warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ESP32 BLE Tester</h1>
+        
+        <div id="compatibility-warning" class="compatibility-warning hidden">
+            <p>⚠️ Your browser doesn't support Web Bluetooth API</p>
+            <p>For BLE functionality, please use Chrome or Edge</p>
+        </div>
+        
+        <div class="ble-controls">
+            <button id="scan-button" class="btn">Scan for ESP32 Device</button>
+            <div id="status" class="status disconnected">Disconnected</div>
+        </div>
+        
+        <div id="battery-section" class="data-section hidden">
+            <h2>Battery Information</h2>
+            <div class="data-row">
+                <span class="data-label">Battery Level:</span>
+                <span id="battery-level" class="data-value">--</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">Battery Voltage:</span>
+                <span id="battery-voltage" class="data-value">--</span>
+            </div>
+        </div>
+        
+        <div id="flex-section" class="data-section hidden">
+            <h2>Flex Sensor Data</h2>
+            <div class="data-row">
+                <span class="data-label">Current Value:</span>
+                <span id="flex-value" class="data-value">--</span>
+            </div>
+        </div>
+        
+        <div id="log-section" class="log-section">
+            <div class="log-entry info">Waiting for user to scan for ESP32 device...</div>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // DOM elements
+        const scanButton = document.getElementById('scan-button');
+        const statusElement = document.getElementById('status');
+        const batterySection = document.getElementById('battery-section');
+        const flexSection = document.getElementById('flex-section');
+        const batteryLevel = document.getElementById('battery-level');
+        const batteryVoltage = document.getElementById('battery-voltage');
+        const flexValue = document.getElementById('flex-value');
+        const logSection = document.getElementById('log-section');
+        const compatibilityWarning = document.getElementById('compatibility-warning');
+        
+        // BLE UUIDs
+        const ESP32_SERVICE_UUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
+        const FLEX_CHARACTERISTIC_UUID = 'beb5483e-36e1-4688-b7f5-ea07361b26ac';
+        const BATTERY_CHARACTERISTIC_UUID = 'beb5483e-36e1-4688-b7f5-ea07361b26ad';
+        
+        // BLE device state
+        let device = null;
+        let server = null;
+        let service = null;
+        let flexCharacteristic = null;
+        let batteryCharacteristic = null;
+        
+        // Check if Web Bluetooth is supported
+        const isWebBluetoothSupported = 'bluetooth' in navigator;
+        
+        // Helper: Add log entry
+        function addLog(message, type = 'info') {
+            const logEntry = document.createElement('div');
+            logEntry.classList.add('log-entry', type);
+            logEntry.textContent = message;
+            logSection.appendChild(logEntry);
+            logSection.scrollTop = logSection.scrollHeight;
+        }
+        
+        // Initialize
+        function init() {
+            if (!isWebBluetoothSupported) {
+                compatibilityWarning.classList.remove('hidden');
+                scanButton.disabled = true;
+                addLog('Web Bluetooth API is not supported in this browser', 'error');
+            } else {
+                addLog('Web Bluetooth API is supported in this browser', 'success');
+            }
+            
+            // Set up scan button
+            scanButton.addEventListener('click', startScan);
+        }
+        
+        // Start scanning for BLE devices
+        async function startScan() {
+            try {
+                statusElement.textContent = 'Scanning...';
+                statusElement.className = 'status scanning';
+                addLog('Starting scan for ESP32 devices...');
+                
+                // Request device with ESP32 service UUID
+                device = await navigator.bluetooth.requestDevice({
+                    filters: [{ services: [ESP32_SERVICE_UUID] }]
+                });
+                
+                addLog(`ESP32 device selected: ${device.name || 'Unnamed Device'}`, 'success');
+                
+                // Set up disconnection listener
+                device.addEventListener('gattserverdisconnected', onDisconnected);
+                
+                // Connect to the device
+                await connectToDevice();
+            } catch (error) {
+                statusElement.textContent = 'Disconnected';
+                statusElement.className = 'status disconnected';
+                addLog(`Error scanning for devices: ${error.message}`, 'error');
+                console.error('Error scanning for devices:', error);
+            }
+        }
+        
+        // Connect to device
+        async function connectToDevice() {
+            if (!device) {
+                addLog('No device selected', 'error');
+                return;
+            }
+            
+            try {
+                statusElement.textContent = 'Connecting...';
+                addLog('Connecting to GATT server...');
+                
+                // Connect to GATT server
+                server = await device.gatt.connect();
+                
+                // Get primary service
+                addLog('Getting ESP32 service...');
+                service = await server.getPrimaryService(ESP32_SERVICE_UUID);
+                
+                // Get the flex sensor characteristic
+                addLog('Getting flex sensor characteristic...');
+                try {
+                    flexCharacteristic = await service.getCharacteristic(FLEX_CHARACTERISTIC_UUID);
+                    addLog('Flex sensor characteristic found', 'success');
+                    flexSection.classList.remove('hidden');
+                    
+                    // Start notifications for flex sensor
+                    await subscribeToFlexSensor();
+                } catch (e) {
+                    addLog('Flex sensor characteristic not found', 'error');
+                }
+                
+                // Get the battery characteristic
+                addLog('Getting battery characteristic...');
+                try {
+                    batteryCharacteristic = await service.getCharacteristic(BATTERY_CHARACTERISTIC_UUID);
+                    addLog('Battery characteristic found', 'success');
+                    batterySection.classList.remove('hidden');
+                    
+                    // Start notifications for battery
+                    await subscribeToBattery();
+                } catch (e) {
+                    addLog('Battery characteristic not found', 'error');
+                }
+                
+                // Update status
+                statusElement.textContent = `Connected to ${device.name || 'ESP32 Device'}`;
+                statusElement.className = 'status connected';
+                
+                addLog('Successfully connected to ESP32 device', 'success');
+            } catch (error) {
+                statusElement.textContent = 'Connection failed';
+                statusElement.className = 'status disconnected';
+                addLog(`Error connecting to device: ${error.message}`, 'error');
+                console.error('Error connecting to device:', error);
+            }
+        }
+        
+        // Handle disconnection
+        function onDisconnected() {
+            addLog('Device disconnected', 'error');
+            statusElement.textContent = 'Disconnected';
+            statusElement.className = 'status disconnected';
+            
+            // Hide data sections
+            batterySection.classList.add('hidden');
+            flexSection.classList.add('hidden');
+            
+            // Reset device state
+            device = null;
+            server = null;
+            service = null;
+            flexCharacteristic = null;
+            batteryCharacteristic = null;
+        }
+        
+        // Subscribe to flex sensor notifications
+        async function subscribeToFlexSensor() {
+            if (!flexCharacteristic) return;
+            
+            try {
+                addLog('Subscribing to flex sensor notifications...');
+                
+                // Start notifications
+                await flexCharacteristic.startNotifications();
+                
+                // Add event listener
+                flexCharacteristic.addEventListener('characteristicvaluechanged', handleFlexData);
+                
+                addLog('Subscribed to flex sensor data', 'success');
+            } catch (error) {
+                addLog(`Error subscribing to flex sensor: ${error.message}`, 'error');
+                console.error('Error subscribing to flex sensor:', error);
+            }
+        }
+        
+        // Subscribe to battery notifications
+        async function subscribeToBattery() {
+            if (!batteryCharacteristic) return;
+            
+            try {
+                addLog('Subscribing to battery notifications...');
+                
+                // Start notifications
+                await batteryCharacteristic.startNotifications();
+                
+                // Add event listener
+                batteryCharacteristic.addEventListener('characteristicvaluechanged', handleBatteryData);
+                
+                addLog('Subscribed to battery data', 'success');
+            } catch (error) {
+                addLog(`Error subscribing to battery: ${error.message}`, 'error');
+                console.error('Error subscribing to battery:', error);
+            }
+        }
+        
+        // Handle flex sensor data
+        function handleFlexData(event) {
+            try {
+                const value = event.target.value;
+                const dataView = new DataView(value.buffer);
+                
+                // Assuming the flex sensor value is a uint16 at offset 0
+                const flexSensorValue = dataView.getUint16(0, true);
+                
+                // Update UI
+                flexValue.textContent = flexSensorValue;
+                
+                // Log occasionally (not every update to avoid spam)
+                if (Math.random() < 0.1) {
+                    addLog(`Flex sensor value: ${flexSensorValue}`);
+                }
+            } catch (error) {
+                addLog(`Error parsing flex sensor data: ${error.message}`, 'error');
+                console.error('Error parsing flex sensor data:', error);
+            }
+        }
+        
+        // Handle battery data
+        function handleBatteryData(event) {
+            try {
+                const value = event.target.value;
+                const dataView = new DataView(value.buffer);
+                
+                // Get battery level (0-100%) and voltage
+                const level = dataView.getUint8(0);
+                const voltage = dataView.getFloat32(1, true);
+                
+                // Update UI
+                batteryLevel.textContent = `${level}%`;
+                batteryVoltage.textContent = `${voltage.toFixed(2)}V`;
+                
+                // Log occasionally (not every update to avoid spam)
+                if (Math.random() < 0.1) {
+                    addLog(`Battery update - Level: ${level}%, Voltage: ${voltage.toFixed(2)}V`);
+                }
+            } catch (error) {
+                addLog(`Error parsing battery data: ${error.message}`, 'error');
+                console.error('Error parsing battery data:', error);
+            }
+        }
+        
+        // Initialize
+        init();
+    });
+    </script>
+</body>
+</html>

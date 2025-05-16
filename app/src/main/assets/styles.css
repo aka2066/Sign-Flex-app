@@ -1,0 +1,851 @@
+/* 
+ * SignFlex - Main Stylesheet
+ * Responsive design for web and mobile devices
+ */
+
+:root {
+  --primary-color: #2196F3;
+  --secondary-color: #03A9F4;
+  --accent-color: #FF4081;
+  --background-color: #f5f5f5;
+  --text-color: #333333;
+  --error-color: #F44336;
+  --success-color: #4CAF50;
+  --warning-color: #FFC107;
+  --border-radius: 8px;
+  --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent; /* Removes the tap highlight color on mobile */
+  touch-action: manipulation; /* Improves touch response */
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 16px;
+  text-align: center;
+  box-shadow: var(--box-shadow);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+header p {
+  margin: 4px 0 0;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+main {
+  flex: 1;
+  padding: 16px;
+  position: relative;
+}
+
+/* Login Screen Styles */
+.login-screen {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.auth-container {
+  background-color: white;
+  padding: 24px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  margin-top: 16px;
+}
+
+.toggle-container {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.toggle-btn {
+  flex: 1;
+  padding: 12px;
+  text-align: center;
+  background-color: #e0e0e0;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.toggle-btn:first-child {
+  border-top-left-radius: var(--border-radius);
+  border-bottom-left-radius: var(--border-radius);
+}
+
+.toggle-btn:last-child {
+  border-top-right-radius: var(--border-radius);
+  border-bottom-right-radius: var(--border-radius);
+}
+
+.toggle-btn.active {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: var(--border-radius);
+  border: 1px solid #ddd;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+.form-control:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+.primary-btn {
+  width: 100%;
+  padding: 12px 20px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.primary-btn:hover, .primary-btn:focus {
+  background-color: var(--secondary-color);
+  outline: none;
+}
+
+.primary-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.alert {
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  border-radius: var(--border-radius);
+  font-size: 14px;
+}
+
+.alert-error {
+  background-color: rgba(244, 67, 54, 0.1);
+  border: 1px solid var(--error-color);
+  color: var(--error-color);
+}
+
+.alert-success {
+  background-color: rgba(76, 175, 80, 0.1);
+  border: 1px solid var(--success-color);
+  color: var(--success-color);
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Home Screen Styles */
+.home-screen {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 16px;
+  text-align: center;
+}
+
+.user-info {
+  background-color: white;
+  padding: 16px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.user-info h3 {
+  margin: 0 0 8px 0;
+  color: var(--primary-color);
+}
+
+.feature-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.feature-buttons .primary-btn {
+  padding: 16px;
+  font-size: 18px;
+}
+
+.info-text {
+  margin-top: 24px;
+  font-size: 14px;
+  color: #666;
+}
+
+/* ASL Recognition Screen Styles */
+.asl-screen {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.back-btn {
+  background-color: transparent;
+  border: none;
+  color: var(--primary-color);
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px 0;
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.video-container {
+  width: 100%;
+  max-width: 400px;
+  height: 300px;
+  margin: 0 auto 20px;
+  position: relative;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  background-color: #000;
+  box-shadow: var(--box-shadow);
+}
+
+.video-container video, .video-container canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--border-radius);
+}
+
+.prediction-container {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.prediction-box, .gesture-confidence {
+  flex: 1;
+  background-color: white;
+  padding: 16px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  text-align: center;
+  margin: 0 8px;
+}
+
+.prediction-box h3, .gesture-confidence h3 {
+  color: var(--primary-color);
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
+.prediction, .confidence {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.gestures-recognized {
+  background-color: white;
+  padding: 16px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  margin-top: 20px;
+}
+
+.gestures-recognized h3 {
+  color: var(--primary-color);
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.gesture-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.gesture {
+  padding: 8px 16px;
+  background-color: var(--secondary-color);
+  color: white;
+  border-radius: 20px;
+  font-size: 14px;
+}
+
+/* BLE Connection Screen Styles */
+.ble-screen {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 16px;
+  text-align: center;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.indicator-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.connected {
+  background-color: rgba(0, 255, 0, 0.1);
+}
+
+.connected .indicator-dot {
+  background-color: #00cc00;
+  box-shadow: 0 0 5px #00cc00;
+}
+
+.disconnected {
+  background-color: rgba(255, 0, 0, 0.1);
+}
+
+.disconnected .indicator-dot {
+  background-color: #cc0000;
+  box-shadow: 0 0 5px #cc0000;
+}
+
+.ble-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.device-list {
+  margin: 15px 0;
+  max-height: 150px;
+  overflow-y: auto;
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.device-item {
+  padding: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: left;
+}
+
+.device-item.selected {
+  background-color: rgba(33, 150, 243, 0.2);
+}
+
+.device-name {
+  font-weight: bold;
+}
+
+.device-id {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.data-container {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+
+.sensor {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+  padding: 8px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.sensor-label {
+  font-weight: bold;
+}
+
+.ble-error {
+  color: #ff6b6b;
+  margin: 10px 0;
+  font-weight: bold;
+}
+
+/* Battery Styles */
+.battery-container {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+
+.battery-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.battery-level {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.battery-level-outer {
+  flex: 1;
+  height: 20px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.battery-level-inner {
+  height: 100%;
+  background: linear-gradient(to right, #ff5f6d, #ffc371);
+  border-radius: 10px;
+  transition: width 0.5s ease;
+}
+
+.battery-percentage {
+  font-weight: bold;
+  min-width: 45px;
+  text-align: left;
+}
+
+.battery-voltage {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.voltage-label {
+  font-weight: bold;
+}
+
+/* Battery level colors */
+.battery-critical {
+  background: linear-gradient(to right, #ff0000, #ff5f6d);
+}
+
+.battery-low {
+  background: linear-gradient(to right, #ff5f6d, #ffc371);
+}
+
+.battery-medium {
+  background: linear-gradient(to right, #ffc371, #90ee90);
+}
+
+.battery-high {
+  background: linear-gradient(to right, #90ee90, #00cc00);
+}
+
+/* Demo mode styles */
+.demo-button-container {
+  margin: 20px auto;
+  text-align: center;
+  max-width: 300px;
+}
+
+.demo-button {
+  background-color: #2ee59d;
+  border: none;
+  color: white;
+  padding: 12px 24px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  font-weight: bold;
+  margin: 10px 0;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.demo-button:hover {
+  background-color: #26c988;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.demo-notice {
+  font-size: 14px;
+  color: #999;
+  margin-top: 5px;
+}
+
+/* Simulation mode styles */
+.simulation-message {
+  background-color: #fff8e1;
+  border-left: 4px solid #ffc107;
+  padding: 12px 15px;
+  margin: 15px 0;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.simulation-badge {
+  display: inline-block;
+  background-color: #ffc107;
+  color: #212121;
+  font-weight: bold;
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.simulation-message p {
+  margin: 5px 0 0;
+  color: #5d4037;
+  font-size: 14px;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 767px) {
+  .container {
+    padding: 0;
+  }
+  
+  header {
+    padding: 12px;
+  }
+  
+  header h1 {
+    font-size: 1.5rem;
+  }
+  
+  main {
+    padding: 12px;
+  }
+  
+  .login-screen, .home-screen, .asl-screen, .ble-screen {
+    padding: 12px 0;
+  }
+  
+  .form-container {
+    padding: 16px;
+  }
+  
+  .video-container {
+    height: 240px;
+  }
+  
+  .prediction-container {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .prediction-box, .gesture-confidence {
+    margin: 0;
+  }
+  
+  .feature-buttons .primary-btn {
+    padding: 14px;
+    font-size: 16px;
+  }
+}
+
+/* iPhone/Safari specific fixes */
+@supports (-webkit-touch-callout: none) {
+  /* Fix for video/canvas overflow on iOS Safari */
+  .video-container {
+    z-index: 1;
+  }
+  
+  /* Fix for input zoom on focus */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"] {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+}
+
+/* Additional Android WebView specific fixes */
+.android-webview {
+  /* Add any Android WebView specific styles here */
+  /* For example, extra padding for navigation bars */
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* Fix for notch/display cutouts */
+@supports (padding: max(0px)) {
+  header {
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+    padding-top: max(16px, env(safe-area-inset-top));
+  }
+}
+
+/* Ensure elements are easily tappable on mobile */
+button, .action-btn, .primary-btn, .toggle-btn {
+  min-height: 44px; /* Recommended minimum touch target size */
+}
+
+/* Prevent text selection on interactive elements */
+button, .device-item, .toggle-btn {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Improve scrolling experience */
+.device-list {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* BLE Device Connection Styles */
+.device-info-section {
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.device-info-section h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 1.1rem;
+  color: var(--primary-color);
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+}
+
+.ble-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.ble-controls button {
+  margin-bottom: 12px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.status {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 20px;
+  background-color: #e0e0e0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 16px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.status.connected {
+  background-color: var(--success-color);
+  color: white;
+}
+
+.status.error {
+  background-color: var(--error-color);
+  color: white;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  grid-gap: 8px;
+  align-items: center;
+}
+
+.info-label {
+  font-weight: 500;
+  color: #666;
+}
+
+.info-value {
+  font-family: 'Courier New', monospace;
+  background-color: #f5f5f5;
+  padding: 6px 10px;
+  border-radius: 4px;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+/* Highlight for recognized gestures */
+.info-value.gesture {
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-align: center;
+  background-color: #f0f0f0;
+  transition: all 0.3s ease;
+}
+
+.info-value.gesture.highlight {
+  background-color: var(--accent-color);
+  color: white;
+  transform: scale(1.05);
+}
+
+/* Accelerometer readings */
+#accel-readings {
+  border-left: 4px solid var(--secondary-color);
+}
+
+/* Flex sensor readings */
+#flex-readings {
+  border-left: 4px solid var(--primary-color);
+}
+
+/* Battery info */
+#battery-info {
+  border-left: 4px solid var(--success-color);
+}
+
+/* Gesture recognition */
+#gesture-recognition {
+  border-left: 4px solid var(--accent-color);
+}
+
+/* Calibration button */
+.calibrate-btn {
+  background-color: var(--warning-color);
+  color: #333;
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 8px 16px;
+  font-weight: 500;
+  margin-top: 8px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.calibrate-btn:hover {
+  background-color: #e0a800;
+}
+
+.process-btn {
+  background-color: var(--secondary-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 8px 16px;
+  font-weight: 500;
+  margin-top: 8px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.process-btn:hover {
+  background-color: #0288d1;
+}
+
+/* Animations */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.pulse {
+  animation: pulse 1.5s infinite;
+}
+
+/* ASL Letter display */
+.asl-letter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  height: 100px;
+  background-color: var(--primary-color);
+  color: white;
+  font-size: 3rem;
+  font-weight: bold;
+  border-radius: 50%;
+  margin: 16px auto;
+  box-shadow: var(--box-shadow);
+}
+
+/* Media queries for responsive design */
+@media (max-width: 768px) {
+  .info-grid {
+    grid-template-columns: 100px 1fr;
+  }
+  
+  .device-info-section {
+    padding: 12px;
+  }
+  
+  .asl-letter {
+    width: 80px;
+    height: 80px;
+    font-size: 2.5rem;
+  }
+}

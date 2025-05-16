@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SignFlex - ASL & ESP32 BLE</title>
+    <link rel="stylesheet" href="./styles.css">
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#2196F3">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="SignFlex">
+    <!-- iOS support -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="SignFlex">
+    <link rel="apple-touch-icon" href="./images/icons/icon-192x192.png">
+    <script>
+        // Fix for ES modules in older browsers
+        window.addEventListener('error', function(e) {
+            console.error('Error:', e.message);
+            if (e.message && e.message.includes('module specifier')) {
+                alert('Module loading error. This might be due to CORS or browser compatibility issues.');
+            }
+        });
+        
+        // Debug function to help with troubleshooting
+        function logElement(id) {
+            const el = document.getElementById(id);
+            console.log(`Element ${id}:`, el ? 'Found' : 'Not found');
+        }
+        
+        // Make sure to run init after DOM is fully loaded
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM fully loaded');
+            setTimeout(function() {
+                logElement('login-screen');
+                logElement('home-screen');
+                logElement('asl-screen');
+                logElement('ble-screen');
+                
+                // Try to force initialize
+                if (window.initializeAuth) {
+                    console.log('Manually calling initializeAuth()');
+                    window.initializeAuth();
+                }
+            }, 500);
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>SignFlex</h1>
+            <p>ASL Recognition & ESP32 BLE</p>
+        </header>
+        
+        <main>
+            <!-- Login Screen -->
+            <div id="login-screen" class="screen">
+                <div class="login-container">
+                    <h2>Sign In</h2>
+                    <div class="demo-button-container">
+                        <button id="demo-login-button" class="demo-button">Enter Demo Mode</button>
+                        <p class="demo-notice">No login required - test the app instantly</p>
+                    </div>
+                    <form id="login-form" class="login-form">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" name="username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" name="password" required>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="submit-btn">Login</button>
+                            <button type="button" id="register-link" class="link-btn">Create Account</button>
+                        </div>
+                        <div id="login-error" class="error-message hidden"></div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Home Screen with navigation options -->
+            <div id="home-screen" class="screen hidden">
+                <div id="user-info" class="user-info">
+                    <!-- User info will be populated by JavaScript -->
+                </div>
+                <h2>Welcome to SignFlex</h2>
+                <p>Choose a feature to get started</p>
+                <div class="feature-buttons">
+                    <button id="start-asl-btn" class="primary-btn">ASL Recognition</button>
+                    <button id="start-ble-btn" class="primary-btn">ESP32 BLE Connection</button>
+                </div>
+                <div class="info-text">
+                    <p>This app works best on Chrome for Android</p>
+                </div>
+            </div>
+            
+            <!-- ASL Recognition Screen -->
+            <div id="asl-screen" class="screen hidden">
+                <button id="asl-back-btn" class="back-btn">← Back</button>
+                <h2>ASL Recognition</h2>
+                <div class="video-container">
+                    <video id="video" autoplay muted playsinline></video>
+                    <canvas id="canvas"></canvas>
+                </div>
+                <div class="prediction-container">
+                    <div class="prediction-box">
+                        <h3>Prediction</h3>
+                        <div id="prediction" class="prediction">-</div>
+                    </div>
+                    <div class="gesture-confidence">
+                        <h3>Confidence</h3>
+                        <div id="confidence" class="confidence">-</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- BLE Screen -->
+            <div id="ble-screen" class="screen hidden">
+                <button id="ble-back-btn" class="back-btn">← Back</button>
+                <h2>ESP32 Connection</h2>
+                
+                <div class="ble-compatibility"></div>
+                
+                <div class="ble-controls">
+                    <button id="scan-btn" class="primary-btn">Scan for ESP32</button>
+                    <div id="device-status" class="status">Disconnected</div>
+                </div>
+                
+                <div id="battery-info" class="device-info-section hidden">
+                    <h3>Battery Status</h3>
+                    <div class="info-grid">
+                        <div class="info-label">Level:</div>
+                        <div id="battery-level" class="info-value">--</div>
+                        <div class="info-label">Voltage:</div>
+                        <div id="battery-voltage" class="info-value">--</div>
+                    </div>
+                </div>
+                
+                <div id="flex-readings" class="device-info-section hidden">
+                    <h3>Flex Sensor Data</h3>
+                    <div class="info-grid">
+                        <div class="info-label">Value:</div>
+                        <div id="flex-value" class="info-value">--</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Load TensorFlow.js and related libraries from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/handpose@0.0.7"></script>
+    
+    <!-- Load application scripts -->
+    <script src="./fingerpose.js"></script>
+    <script src="./asl-gestures.js"></script>
+    <script type="module" src="./auth.js"></script>
+    <script type="module" src="./login-screen.js"></script>
+    <script type="module" src="./ble-manager.js"></script>
+    <script type="module" src="./flex-db.js"></script>
+    <script type="module" src="./flex-ui.js"></script>
+    <script type="module" src="./speech-manager.js"></script>
+    <script type="module" src="./app.js"></script>
+    <script type="module" src="./main.js"></script>
+    <script type="module" src="./demo-init.js"></script>
+    <script src="./direct-fix.js"></script>
+    <script src="./android-ble-bridge.js"></script>
+    
+    <!-- Offline mode support for Android -->
+    <script src="offline-android.js"></script>
+    
+    <!-- Android Bridge Script (for WebView integration) -->
+    <script>
+        // Interface for Android WebView integration
+        window.AndroidInterface = {
+            // Method to send data from web to Android native
+            sendToAndroid: function(action, data) {
+                try {
+                    // Check if Android interface is available
+                    if (window.Android) {
+                        console.log('Sending to Android:', action, data);
+                        // Call the receiveData method implemented in Android's WebAppInterface
+                        window.Android.receiveData(JSON.stringify({
+                            action: action,
+                            data: data
+                        }));
+                    } else {
+                        console.log('Android interface not available, running in browser mode');
+                    }
+                } catch (e) {
+                    console.error('Error sending data to Android:', e);
+                }
+            },
+            
+            // Method to receive data from Android native
+            receiveFromAndroid: function(jsonData) {
+                try {
+                    console.log('Received from Android:', jsonData);
+                    const data = JSON.parse(jsonData);
+                    
+                    // Handle different actions from Android
+                    switch(data.action) {
+                        case 'login':
+                            // Handle login request from Android
+                            if (window.auth) {
+                                auth.login(data.username, data.password)
+                                    .then(() => {
+                                        this.sendToAndroid('loginResult', { success: true });
+                                    })
+                                    .catch(error => {
+                                        this.sendToAndroid('loginResult', { 
+                                            success: false, 
+                                            error: error.message 
+                                        });
+                                    });
+                            }
+                            break;
+                            
+                        case 'startASL':
+                            // Switch to ASL screen
+                            if (window.showAslScreen) {
+                                showAslScreen();
+                                this.sendToAndroid('screenChanged', { screen: 'asl' });
+                            }
+                            break;
+                            
+                        case 'startBLE':
+                            // Switch to BLE screen
+                            if (window.showBleScreen) {
+                                showBleScreen();
+                                this.sendToAndroid('screenChanged', { screen: 'ble' });
+                            }
+                            break;
+                            
+                        default:
+                            console.log('Unknown action from Android:', data.action);
+                    }
+                } catch (e) {
+                    console.error('Error processing data from Android:', e);
+                }
+            }
+        };
+        
+        // Expose key functions to global scope for Android WebView access
+        window.initializeApp = function() {
+            // Initialize the app (will be called by Android WebView)
+            if (window.initializeAuth) {
+                window.initializeAuth();
+            }
+        };
+    </script>
+</body>
+</html>
